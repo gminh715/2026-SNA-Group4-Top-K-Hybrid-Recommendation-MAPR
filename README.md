@@ -95,10 +95,10 @@ SeRel-LightFM mở rộng LightFM bằng cách bổ sung các cụm đặc trưn
 
 | Nhóm đặc trưng | Nguồn tín hiệu | Cách đưa vào LightFM |
 |---|---|---|
-| Metadata item | Thể loại, chủ đề, quốc gia, năm phát hành, thời lượng | Feature rời rạc và biến liên tục đã chuẩn hóa |
-| Hồ sơ user | Thông tin tĩnh và hành vi tổng quát | Feature rời rạc phía user |
-| Embedding văn bản | Sentence Transformer trên mô tả đa trường của phim | KMeans text clusters |
-| Embedding đồ thị tri thức | TransE trên đồ thị tri thức mở rộng | KMeans KGE clusters |
+| Metadata item - CFS | Thể loại, chủ đề, quốc gia, năm phát hành, thời lượng | Feature rời rạc và biến liên tục đã chuẩn hóa |
+| Hồ sơ user - CFS | Thông tin tĩnh và hành vi tổng quát | Feature rời rạc phía user |
+| Embedding văn bản - ARSR | Sentence Transformer trên mô tả đa trường của phim | KMeans text clusters |
+| Embedding đồ thị tri thức - ARSR | TransE trên đồ thị tri thức mở rộng | KMeans KGE clusters |
 
 #### Biểu diễn văn bản
 
@@ -164,31 +164,49 @@ Với bài toán gợi ý Top-$K$, NDCG thường quan trọng vì không chỉ 
 
 Các bảng dưới đây chỉ báo cáo kết quả trên full TEST. Giá trị được trích từ output đã lưu trong các notebook.
 
-### 6.1 Recall trên full TEST
+### 6.1 Recall trên full TEST: so sánh các phương pháp chính
 
 | Mô hình | Recall@5 | Recall@10 | Recall@20 | Recall@50 |
 |---|---:|---:|---:|---:|
 | Popularity Baseline | 0.0115 | 0.0191 | 0.0229 | 0.0611 |
 | ItemKNN Baseline | 0.0153 | 0.0191 | 0.0229 | 0.0611 |
 | LightFM Baseline | 0.0153 | 0.0267 | 0.0344 | 0.0687 |
-| Ablation không Text Encoder | 0.0115 | 0.0191 | 0.0420 | 0.0649 |
-| Ablation không KGE | 0.0191 | 0.0229 | 0.0382 | 0.0649 |
 | SeRel-LightFM đầy đủ | **0.0267** | **0.0267** | 0.0382 | **0.0725** |
 
-SeRel-LightFM đầy đủ đạt Recall@5 và Recall@50 cao nhất. Ở Recall@10, mô hình đề xuất ngang với LightFM Baseline và cao hơn các baseline còn lại. Ở Recall@20, ablation không Text Encoder đạt giá trị cao nhất, trong khi SeRel-LightFM đầy đủ ngang với ablation không KGE.
+SeRel-LightFM đầy đủ đạt Recall@5 và Recall@50 cao nhất trong nhóm phương pháp chính. Ở Recall@10, mô hình đề xuất ngang với LightFM Baseline và cao hơn Popularity Baseline, ItemKNN Baseline.
 
-### 6.2 NDCG trên full TEST
+### 6.2 NDCG trên full TEST: so sánh các phương pháp chính
 
 | Mô hình | NDCG@5 | NDCG@10 | NDCG@20 | NDCG@50 |
 |---|---:|---:|---:|---:|
 | Popularity Baseline | 0.0115 | 0.0141 | 0.0150 | 0.0221 |
 | ItemKNN Baseline | 0.0115 | 0.0129 | 0.0139 | 0.0213 |
 | LightFM Baseline | 0.0091 | 0.0127 | 0.0146 | 0.0213 |
+| SeRel-LightFM đầy đủ | **0.0162** | **0.0162** | 0.0191 | **0.0260** |
+
+SeRel-LightFM đầy đủ đạt NDCG@5, NDCG@10 và NDCG@50 cao nhất. Điều này cho thấy mô hình đề xuất có xu hướng đưa item đúng lên vị trí cao hơn trong danh sách gợi ý, đặc biệt ở các cutoff nhỏ và lớn.
+
+### 6.3 Recall trên full TEST: phân tích ablation
+
+| Mô hình | Recall@5 | Recall@10 | Recall@20 | Recall@50 |
+|---|---:|---:|---:|---:|
+| LightFM Baseline | 0.0153 | **0.0267** | 0.0344 | 0.0687 |
+| Ablation không Text Encoder | 0.0115 | 0.0191 | **0.0420** | 0.0649 |
+| Ablation không KGE | 0.0191 | 0.0229 | 0.0382 | 0.0649 |
+| SeRel-LightFM đầy đủ | **0.0267** | **0.0267** | 0.0382 | **0.0725** |
+
+Bảng ablation cho thấy SeRel-LightFM đầy đủ đạt Recall@5 và Recall@50 cao nhất. Ở Recall@20, biến thể không Text Encoder đạt giá trị cao nhất, cho thấy đóng góp của từng thành phần có thể khác nhau theo cutoff.
+
+### 6.4 NDCG trên full TEST: phân tích ablation
+
+| Mô hình | NDCG@5 | NDCG@10 | NDCG@20 | NDCG@50 |
+|---|---:|---:|---:|---:|
+| LightFM Baseline | 0.0091 | 0.0127 | 0.0146 | 0.0213 |
 | Ablation không Text Encoder | 0.0065 | 0.0089 | 0.0147 | 0.0191 |
 | Ablation không KGE | 0.0144 | 0.0157 | **0.0196** | 0.0251 |
 | SeRel-LightFM đầy đủ | **0.0162** | **0.0162** | 0.0191 | **0.0260** |
 
-SeRel-LightFM đầy đủ đạt NDCG@5, NDCG@10 và NDCG@50 cao nhất. Điều này cho thấy mô hình đề xuất có xu hướng đưa item đúng lên vị trí cao hơn trong danh sách gợi ý, đặc biệt ở các cutoff nhỏ và lớn.
+Ở nhóm ablation, SeRel-LightFM đầy đủ đạt NDCG@5, NDCG@10 và NDCG@50 cao nhất. Ablation không KGE đạt NDCG@20 cao nhất, cho thấy text clusters đóng góp mạnh ở cutoff trung bình, trong khi KGE giúp cải thiện thêm khi kết hợp trong mô hình đầy đủ.
 
 ## 7. Phân tích kết quả
 
