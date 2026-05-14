@@ -74,8 +74,8 @@ $$
 Độ tương đồng giữa hai item được tính bằng cosine similarity trên vector tương tác người dùng. Với user $u$ và item ứng viên $j$, điểm gợi ý được tính bằng tổng độ tương đồng giữa $j$ và các item mà user đã tương tác dương trong train:
 
 $$
-\operatorname{score}(u,j) =
-\sum_{i \in N(j,K) \cap I_u^+} \operatorname{sim}(i,j).
+\mathrm{score}(u,j) =
+\sum_{i \in N(j,K) \cap I_u^+} \mathrm{sim}(i,j).
 $$
 
 Trong đó $N(j,K)$ là tập $K$ item lân cận của item $j$, còn $I_u^+$ là tập item dương trong lịch sử huấn luyện của user $u$.
@@ -143,7 +143,7 @@ Nghiên cứu chỉ sử dụng hai chỉ số trên full TEST:
 Recall@$K$ đo tỷ lệ item đúng được tìm thấy trong top-$K$ gợi ý:
 
 $$
-\operatorname{Recall@K} =
+\mathrm{Recall@K} =
 \frac{|G_u \cap P_u^K|}{|G_u|},
 $$
 
@@ -154,8 +154,8 @@ trong đó $G_u$ là tập item đúng của user $u$, còn $P_u^K$ là tập to
 NDCG@$K$ đánh giá chất lượng thứ hạng của item đúng trong top-$K$. Chỉ số này ưu tiên các mô hình đưa item đúng lên vị trí cao hơn:
 
 $$
-\operatorname{NDCG@K} =
-\frac{\operatorname{DCG@K}}{\operatorname{IDCG@K}}.
+\mathrm{NDCG@K} =
+\frac{\mathrm{DCG@K}}{\mathrm{IDCG@K}}.
 $$
 
 Với bài toán gợi ý Top-$K$, NDCG thường quan trọng vì không chỉ xét item đúng có xuất hiện hay không, mà còn xét item đúng xuất hiện ở vị trí nào trong danh sách.
@@ -230,28 +230,8 @@ So với LightFM Baseline, SeRel-LightFM đầy đủ cải thiện:
 - NDCG@10 từ 0.0127 lên 0.0162.
 - NDCG@50 từ 0.0213 lên 0.0260.
 
-## 8. Hạn chế
-
-Nghiên cứu hiện tại còn một số hạn chế:
-
-1. Các kết quả mới phản ánh một lần chạy, chưa báo cáo trung bình và độ lệch chuẩn qua nhiều seed.
-2. Việc lựa chọn số cụm KMeans và trọng số scale giữa các nhóm feature vẫn mang tính thực nghiệm.
-3. Embedding dense được chuyển thành feature cụm rời rạc trước khi đưa vào LightFM, có thể làm mất một phần thông tin liên tục.
-4. Một số siêu tham số của LightFM, Text Encoder và KGE có thể cần được tối ưu hệ thống hơn trên validation.
-
-## 9. Hướng phát triển
-
-Các hướng cải thiện tiếp theo gồm:
-
-- Chạy nhiều seed để báo cáo kết quả ổn định hơn.
-- Tối ưu số cụm text/KGE và trọng số feature bằng validation.
-- So sánh thêm với các mô hình neural recommendation như Neural Collaborative Filtering, LightGCN hoặc SASRec.
-- Thử nghiệm cách đưa dense embeddings trực tiếp vào mô hình xếp hạng thay vì chỉ dùng cluster feature.
-- Phân tích định tính các cụm text và KGE để đánh giá khả năng diễn giải của đặc trưng.
-
-## 10. Kết luận
+## 8. Kết luận
 
 Nghiên cứu cho thấy SeRel-LightFM là hướng tiếp cận có triển vọng cho bài toán gợi ý phim trong thiết lập phản hồi ẩn. Khi chỉ xét full TEST với hai chỉ số Recall và NDCG, mô hình đề xuất đạt kết quả nổi bật nhất ở NDCG@5, NDCG@10, NDCG@50, Recall@5 và Recall@50.
 
 Kết quả ablation cho thấy embedding văn bản đóng vai trò quan trọng, trong khi KGE bổ sung thêm tín hiệu quan hệ giúp cải thiện chất lượng xếp hạng khi kết hợp với text clusters. Nhìn chung, việc tích hợp metadata, biểu diễn văn bản và biểu diễn đồ thị tri thức vào LightFM giúp nâng cao hiệu quả gợi ý so với các baseline trong nghiên cứu này.
-
